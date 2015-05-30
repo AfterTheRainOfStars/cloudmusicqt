@@ -84,7 +84,8 @@ contains(MEEGO_EDITION, harmattan) {
     message(harmattan build)
 
     QT += dbus
-    CONFIG += meegotouch qdeclarative-boostable
+    CONFIG += meegotouch
+    CONFIG += qdeclarative-boostable
 
     include(notifications/notifications.pri)
 
@@ -95,10 +96,9 @@ contains(MEEGO_EDITION, harmattan) {
     gameclassify.files += qtc_packaging/debian_harmattan/$${TARGET}.conf
     gameclassify.path = /usr/share/policy/etc/syspart.conf.d
 
-    export(iconsvg.files)
-    export(iconsvg.path)
-    export(gameclassify.files)
-    export(gameclassify.path)
+    HEADERS += src/cloudmusicif.h
+
+    SOURCES += src/cloudmusicif.cpp
 
     INSTALLS += iconsvg gameclassify
 }

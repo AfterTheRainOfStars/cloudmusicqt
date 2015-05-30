@@ -20,6 +20,10 @@
 #include <QNetworkProxy>
 #endif
 
+#ifdef HARMATTAN_BOOSTER
+#include "cloudmusicif.h"
+#endif
+
 #define RegisterPlugin(Plugin) \
     qmlRegisterType<Plugin>("com.yeatse.cloudmusic", 1, 0, #Plugin)
 
@@ -67,6 +71,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QObject::connect(qApp, SIGNAL(aboutToQuit()), MusicDownloadDatabase::Instance(), SLOT(freeResource()));
 
 #if defined(HARMATTAN_BOOSTER)
+    new Cloudmusicif(app.data(), viewer.data());
+
     viewer->setMainQmlFile(QLatin1String("qml/harmattan/main.qml"));
 #elif defined(Q_OS_SYSBIAN)//||defined(Q_WS_SIMULATOR)
     viewer->setMainQmlFile(QLatin1String("qml/cloudmusicqt/main.qml"));
