@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative>
 #include <QWebSettings>
+#include <QDebug>
 
 #include "qmlapplicationviewer.h"
 #include "networkaccessmanagerfactory.h"
@@ -11,8 +12,9 @@
 #include "musicdownloader.h"
 #include "musicdownloadmodel.h"
 #include "musicdownloaddatabase.h"
+#include "selectfilesdialog.h"
 
-#define PROXY_HOST "192.168.1.64"
+//#define PROXY_HOST "127.0.0.1"
 
 #ifdef PROXY_HOST
 #include <QNetworkProxy>
@@ -56,6 +58,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer->rootContext()->setContextProperty("qmlApi", new QmlApi(viewer.data()));
     viewer->rootContext()->setContextProperty("collector", new MusicCollector(viewer.data()));
     viewer->rootContext()->setContextProperty("appVersion", app->applicationVersion());
+    viewer->rootContext()->setContextProperty("fileDialog", new SelectFilesDialog());
 
     MusicDownloader* downloader = MusicDownloader::Instance();
     viewer->rootContext()->setContextProperty("downloader", downloader);
@@ -63,7 +66,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QObject::connect(qApp, SIGNAL(aboutToQuit()), downloader, SLOT(pause()));
     QObject::connect(qApp, SIGNAL(aboutToQuit()), MusicDownloadDatabase::Instance(), SLOT(freeResource()));
 
+#if defined(HARMATTAN_BOOSTER)
+    viewer->setMainQmlFile(QLatin1String("qml/harmattan/main.qml"));
+#elif defined(Q_OS_SYSBIAN)//||defined(Q_WS_SIMULATOR)
     viewer->setMainQmlFile(QLatin1String("qml/cloudmusicqt/main.qml"));
+#elif defined(Q_WS_SIMULATOR)
+    viewer->setMainQmlFile(QLatin1String("qml/harmattan/main.qml"));
+#endif
     viewer->showExpanded();
 
     return app->exec();

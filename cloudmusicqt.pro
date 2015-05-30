@@ -10,27 +10,27 @@ CONFIG += mobility
 MOBILITY += multimedia systeminfo
 
 HEADERS += \
-    qmlapi.h \
-    networkaccessmanagerfactory.h \
-    singletonbase.h \
-    userconfig.h \
-    musicfetcher.h \
-    blurreditem.h \
-    musiccollector.h \
-    musicdownloader.h \
-    musicdownloaddatabase.h \
-    musicdownloadmodel.h
+    src/qmlapi.h \
+    src/networkaccessmanagerfactory.h \
+    src/singletonbase.h \
+    src/userconfig.h \
+    src/musicfetcher.h \
+    src/blurreditem.h \
+    src/musiccollector.h \
+    src/musicdownloader.h \
+    src/musicdownloaddatabase.h \
+    src/musicdownloadmodel.h
 
-SOURCES += main.cpp \
-    qmlapi.cpp \
-    networkaccessmanagerfactory.cpp \
-    userconfig.cpp \
-    musicfetcher.cpp \
-    blurreditem.cpp \
-    musiccollector.cpp \
-    musicdownloader.cpp \
-    musicdownloaddatabase.cpp \
-    musicdownloadmodel.cpp
+SOURCES += src/main.cpp \
+    src/qmlapi.cpp \
+    src/networkaccessmanagerfactory.cpp \
+    src/userconfig.cpp \
+    src/musicfetcher.cpp \
+    src/blurreditem.cpp \
+    src/musiccollector.cpp \
+    src/musicdownloader.cpp \
+    src/musicdownloaddatabase.cpp \
+    src/musicdownloadmodel.cpp
 
 include(qjson/qjson.pri)
 DEFINES += QJSON_MAKEDLL
@@ -40,11 +40,14 @@ TRANSLATIONS += i18n/cloudmusicqt_zh.ts
 folder_symbian3.source = qml/cloudmusicqt
 folder_symbian3.target = qml
 
+folder_meego.source = qml/harmattan
+folder_meego.target = qml
+
 folder_js.source = qml/js
 folder_js.target = qml
 
 simulator {
-    DEPLOYMENTFOLDERS = folder_symbian3 folder_js
+    DEPLOYMENTFOLDERS = folder_symbian3 folder_js folder_meego
 }
 
 symbian {
@@ -77,6 +80,39 @@ symbian {
     MMP_RULES += "EPOCPROCESSPRIORITY windowserver"
 }
 
+contains(MEEGO_EDITION, harmattan) {
+    message(harmattan build)
+
+    QT += dbus
+    CONFIG += meegotouch qdeclarative-boostable
+
+    include(notifications/notifications.pri)
+
+    DEPLOYMENTFOLDERS = folder_meego folder_js
+
+    iconsvg.files += $${TARGET}_meego.svg
+    iconsvg.path = /usr/share/themes/base/meegotouch/$${TARGET}
+    gameclassify.files += qtc_packaging/debian_harmattan/$${TARGET}.conf
+    gameclassify.path = /usr/share/policy/etc/syspart.conf.d
+
+    export(iconsvg.files)
+    export(iconsvg.path)
+    export(gameclassify.files)
+    export(gameclassify.path)
+
+    INSTALLS += iconsvg gameclassify
+}
+
 # Please do not modify the following two lines. Required for deployment.
+include(selectfilesdialog/selectfilesdialog.pri)
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
+
+OTHER_FILES += \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog

@@ -48,6 +48,7 @@ ApiRequest.prototype.sendRequest = function(onSuccess, onFailure) {
                             if (xhr.status == 200) {
                                 try {
                                     var resp = qmlApi.jsonParse(xhr.responseText)
+                                    //var resp = JSON.parse(xhr.responseText)
                                     if (resp.code == 200)
                                         onSuccess(resp);
                                     else

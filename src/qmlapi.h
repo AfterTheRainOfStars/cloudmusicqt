@@ -30,7 +30,7 @@ public:
 
     Q_INVOKABLE void showNotification(const QString& title, const QString& text,
                                       const int& commandId = 0);
-
+    Q_INVOKABLE void clearNotifications();
     Q_INVOKABLE QVariant jsonParse(const QString& text);
 
     Q_INVOKABLE bool compareVariant(const QVariant& left, const QVariant& right);
@@ -49,7 +49,6 @@ public:
 #ifdef Q_OS_SYMBIAN
     void ProcessCommandL(TInt aCommandId);
 #endif
-
 signals:
     void processCommand(int commandId);
 

@@ -15,6 +15,14 @@
 #include <gsfwviewuids.h>
 #endif
 
+#ifdef HARMATTAN_BOOSTER
+#define NOTIFICATION_EVENTTYPE "cloudmusicqt"
+
+#include <MNotification>
+#include <MRemoteAction>
+#endif
+
+
 #include "networkaccessmanagerfactory.h"
 #include "userconfig.h"
 #include "musicfetcher.h"
@@ -66,7 +74,20 @@ void QmlApi::takeScreenShot()
 
 void QmlApi::showNotification(const QString &title, const QString &text, const int &commandId)
 {
-#ifdef Q_OS_SYMBIAN
+#ifdef Q_OS_S60V5
+    QtMobility::QSystemDeviceInfo deviceInfo;
+    bool silent = deviceInfo.currentProfile() != QtMobility::QSystemDeviceInfo::NormalProfile
+            && deviceInfo.currentProfile() != QtMobility::QSystemDeviceInfo::LoudProfile;
+    TPtrC16 sMessage(static_cast<const TUint16 *>(message.utf16()), message.length());
+    CAknGlobalNote* note = CAknGlobalNote::NewLC();
+    if (silent){
+        note->SetTone(0);
+    } else {
+        note->SetTone(EAvkonSIDReadialCompleteTone);
+    }
+    note->ShowNoteL(EAknGlobalInformationNote, sMessage);
+    CleanupStack::PopAndDestroy(note);
+#elif defined(Q_OS_SYMBIAN)
     TPtrC16 sTitle(static_cast<const TUint16 *>(title.utf16()), title.length());
     TPtrC16 sText(static_cast<const TUint16 *>(text.utf16()), text.length());
     TUid uid = TUid::Uid(0x2006DFF5);
@@ -81,15 +102,37 @@ void QmlApi::showNotification(const QString &title, const QString &text, const i
                     commandId,
                     this,
                     uid ));
+#elif defined(HARMATTAN_BOOSTER)
+    clearNotifications();
+    MNotification notification(NOTIFICATION_EVENTTYPE, title, text);
+    MRemoteAction action("com.cloudmusicqt", "/com/cloudmusicqt", "com.cloudmusicqt", "activateWindow");
+    notification.setAction(action);
+    notification.publish();
 #else
     qDebug() << "showNotification:" << title << text << commandId;
 #endif
 }
 
+void QmlApi::clearNotifications()
+{
+#ifdef HARMATTAN_BOOSTER
+    QList<MNotification*> activeNotifications = MNotification::notifications();
+    QMutableListIterator<MNotification*> i(activeNotifications);
+    while (i.hasNext()) {
+        MNotification *notification = i.next();
+        if (notification->eventType() == NOTIFICATION_EVENTTYPE)
+            notification->remove();
+    }
+#endif
+}
+
+
 static const int MaxAccurateNumberInQML = 65535;
 
 static QVariant fixVariant(const QVariant& variant)
 {
+    //qDebug()<<variant.typeName();
+
     QVariant result(variant);
     if (result.type() == QVariant::ULongLong) {
         quint64 value = result.toULongLong();

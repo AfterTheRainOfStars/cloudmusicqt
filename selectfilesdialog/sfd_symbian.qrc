@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/selectfilesdialog">
+        <file>symbian.qml</file>
+        <file>cancle.svg</file>
+        <file>cancle-inverted.svg</file>
+        <file>done.svg</file>
+        <file>done-inverted.svg</file>
+        <file>mask_symbian.png</file>
+        <file>mask-inverse.png</file>
+    </qresource>
+</RCC>

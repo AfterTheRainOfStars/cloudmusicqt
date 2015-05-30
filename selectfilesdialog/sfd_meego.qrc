@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/selectfilesdialog">
+        <file>meego.qml</file>
+        <file>mask_meego.png</file>
+        <file>mask-inverse.png</file>
+    </qresource>
+</RCC>
