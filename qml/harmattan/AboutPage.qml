@@ -32,6 +32,7 @@ Page {
             font.pixelSize: platformStyle.fontSizeLarge + 4
             anchors.horizontalCenter: parent.horizontalCenter
             text: "网易云音乐测试版"
+            font.pointSize: 20
         }
 
         ListItemText {

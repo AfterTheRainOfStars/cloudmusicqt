@@ -215,6 +215,7 @@ Page {
                     anchors.centerIn: parent
                     running: loading
                     visible: loading
+                    platformStyle: BusyIndicatorStyle { size: "dadade" }
                 }
                 ToolButton {
                     anchors.centerIn: parent

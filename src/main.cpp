@@ -22,6 +22,7 @@
 
 #ifdef HARMATTAN_BOOSTER
 #include "cloudmusicif.h"
+#include <QDBusConnection>
 #endif
 
 #define RegisterPlugin(Plugin) \
@@ -72,6 +73,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
 #if defined(HARMATTAN_BOOSTER)
     new Cloudmusicif(app.data(), viewer.data());
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    bus.registerService("com.cloudmusicqt");
+    bus.registerObject("/com/cloudmusicqt", app.data());
 
     viewer->setMainQmlFile(QLatin1String("qml/harmattan/main.qml"));
 #elif defined(Q_OS_SYSBIAN)//||defined(Q_WS_SIMULATOR)

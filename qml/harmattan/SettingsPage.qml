@@ -16,7 +16,7 @@ Page {
     orientationLock: PageOrientation.LockPortrait
 
     function selectFolder(a, defaultDir){
-        fileDialog.inverseTheme = !theme.inverted
+        fileDialog.inverseTheme = theme.inverted
         fileDialog.chooseType = FilesDialog.FolderType
         fileDialog.chooseMode = FilesDialog.IndividualChoice
         fileDialog.exec(defaultDir, FilesDialog.Dirs|FilesDialog.Drives)
